@@ -1,0 +1,36 @@
+name: build
+run-name: build
+on: [push]
+jobs:
+  build:
+    name: build ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            executable: Release/chordagon.exe
+          - os: macos-latest
+            executable: chordagon
+          - os: ubuntu-latest
+            executable: chordagon
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+            submodules: 'true'
+      - name: Install Linux Deps
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt install libglu1-mesa-dev libwayland-dev libxkbcommon-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libasound2-dev
+      - name: Build
+        run: |
+            cmake -B build -DCMAKE_BUILD_TYPE=Release
+            cmake --build build --config Release
+            ls build
+      - uses: actions/upload-artifact@v4
+        with:
+            name: chordagon_${{ matrix.os }}_${{ github.sha }}
+            path: build/${{ matrix.executable }}
