@@ -21,6 +21,7 @@ include_directories(
 set(GLAD_GL "${GLFW_SOURCE_DIR}/deps/glad/gl.h")
 
 add_executable(${PROJECT_NAME}
+    WIN32
     src/main.cpp
     libs/glad/src/glad.c
     libs/MTS-ESP/Client/libMTSClient.cpp

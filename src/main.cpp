@@ -532,3 +532,5 @@ int main()
     glfwTerminate();
     return 0;
 }
+
+int WinMain() { return main(); }
