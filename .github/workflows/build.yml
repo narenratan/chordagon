@@ -25,11 +25,21 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt install libglu1-mesa-dev libwayland-dev libxkbcommon-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libasound2-dev
+      - name: Import code signing certificates
+        if: matrix.os == 'macos-latest'
+        uses: apple-actions/import-codesign-certs@v2
+        with:
+            p12-file-base64: ${{ secrets.DEV_ID_APP_CERT }}
+            p12-password: ${{ secrets.DEV_ID_APP_PASSWORD }}
       - name: Build
         run: |
             cmake -B build -DCMAKE_BUILD_TYPE=Release
             cmake --build build --config Release
             ls build
+      - name: Code signing
+        if: matrix.os == 'macos-latest'
+        run: |
+            codesign --force -s "${{ secrets.DEVELOPER_ID_APPLICATION}}" -v build/chordagon --deep --strict --timestamp
       - uses: actions/upload-artifact@v4
         with:
             name: chordagon_${{ matrix.os }}_${{ github.sha }}
