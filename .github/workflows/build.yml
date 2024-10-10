@@ -36,10 +36,13 @@ jobs:
             cmake -B build -DCMAKE_BUILD_TYPE=Release
             cmake --build build --config Release
             ls build
-      - name: Code signing
+      - name: Code signing and notarization
         if: matrix.os == 'macos-latest'
         run: |
-            codesign --force -s "${{ secrets.DEVELOPER_ID_APPLICATION}}" -v build/chordagon --deep --strict --timestamp
+            codesign --force -s "${{ secrets.DEVELOPER_ID_APPLICATION}}" -v build/chordagon --deep --strict --timestamp --options runtime
+            cp build/chordagon .
+            zip chordagon.zip chordagon
+            xcrun notarytool submit chordagon.zip --apple-id ${{ secrets.NOTARIZATION_USERNAME }} --team-id ${{ secrets.TEAM_ID }} --password ${{ secrets.NOTARIZATION_PASSWORD }} --wait
       - uses: actions/upload-artifact@v4
         with:
             name: chordagon_${{ matrix.os }}_${{ github.sha }}
