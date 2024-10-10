@@ -12,6 +12,9 @@ Each pair of notes is connected by a line. Each line corresponds to an interval
 in the chord being played. The lines are coloured based on the size of the
 corresponding interval.
 
+Builds for Windows, Mac, and Linux are available on the [releases
+page](https://github.com/narenratan/chordagon/releases).
+
 Build
 -----
 ```console
